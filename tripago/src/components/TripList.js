@@ -1,24 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
+import {useFetch} from '../hooks/useFetch'
 //styles
 import "./TripList.css"
 
 export default function TripList() {
-  const [trips, setTrips] = useState([])
+//   const [trips, setTrips] = useState([])
   const [url, setUrl] = useState('http://localhost:3000/trips')
- 
-  const fetchTrips = useCallback ( async() => {
-    const response = await fetch(url)
-    const json = await response.json()
-    setTrips(json);
-  }, [url] )
-
-  useEffect( () => {
-    // fetch(url)
-    // .then(response => response.json() )
-    // .then(json => setTrips(json))
-    fetchTrips()
-  }, [url, fetchTrips]); // <-- dependency array !! whenever things inside this array changes
-  // UseEffect() will run again.
+  const {data: trips, isPending} = useFetch(url)
+  
 
  
   
@@ -26,9 +15,9 @@ export default function TripList() {
   return (
     <div className="trip-list">
         <h2>Trip List</h2>
-
+        {isPending && <div>Loading trips....</div>}
         <ul>
-            {trips.map(trip => (
+            {trips && trips.map(trip => (
                 <li key={trip.id}>
                     <h3>{trip.title}</h3>
                     <p>{trip.price}</p>
@@ -48,3 +37,20 @@ export default function TripList() {
     </div>
   )
 }
+
+
+
+
+// const fetchTrips = useCallback ( async() => {
+//     const response = await fetch(url)
+//     const json = await response.json()
+//     setTrips(json);
+//   }, [url] )
+
+//   useEffect( () => {
+//     // fetch(url)
+//     // .then(response => response.json() )
+//     // .then(json => setTrips(json))
+//     fetchTrips()
+//   }, [url, fetchTrips]); // <-- dependency array !! whenever things inside this array changes
+//   // UseEffect() will run again.
